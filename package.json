@@ -1,0 +1,20 @@
+{
+  "name": "shortloop",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "infra"
+  ],
+  "scripts": {
+    "dev": "./scripts/dev.sh",
+    "dev:down": "docker compose down",
+    "test": "npm run test --workspace=backend && npm run test --workspace=frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:frontend": "npm run test --workspace=frontend",
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
