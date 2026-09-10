@@ -3,26 +3,31 @@ import { CodeAlreadyExistsError, Link, LinkStore } from './store';
 
 const PG_UNIQUE_VIOLATION = '23505';
 
-function isPgError(err: unknown): err is { code: string } {
-  return typeof err === 'object' && err !== null && 'code' in err;
-}
+const isPgError = (err: unknown): err is { code: string } =>
+  typeof err === 'object' && err !== null && 'code' in err;
 
-export class PgStore implements LinkStore {
-  constructor(private pool: Pool) {}
+const rowToLink = (row: { code: string; url: string; created_at: Date }): Link => ({
+  code: row.code,
+  url: row.url,
+  createdAt: row.created_at.toISOString(),
+});
 
-  async init(): Promise<void> {
-    await this.pool.query(`
+export type PgStore = LinkStore & { init: () => Promise<void> };
+
+export const createPgStore = (pool: Pool): PgStore => ({
+  init: async () => {
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS links (
         code TEXT PRIMARY KEY,
         url TEXT NOT NULL,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       )
     `);
-  }
+  },
 
-  async createLink(code: string, url: string): Promise<Link> {
+  createLink: async (code, url) => {
     try {
-      const result = await this.pool.query(
+      const result = await pool.query(
         'INSERT INTO links (code, url) VALUES ($1, $2) RETURNING code, url, created_at',
         [code, url],
       );
@@ -33,19 +38,15 @@ export class PgStore implements LinkStore {
       }
       throw err;
     }
-  }
+  },
 
-  async getLink(code: string): Promise<Link | null> {
-    const result = await this.pool.query('SELECT code, url, created_at FROM links WHERE code = $1', [code]);
+  getLink: async (code) => {
+    const result = await pool.query('SELECT code, url, created_at FROM links WHERE code = $1', [code]);
     return result.rows[0] ? rowToLink(result.rows[0]) : null;
-  }
+  },
 
-  async listLinks(): Promise<Link[]> {
-    const result = await this.pool.query('SELECT code, url, created_at FROM links ORDER BY created_at DESC');
+  listLinks: async () => {
+    const result = await pool.query('SELECT code, url, created_at FROM links ORDER BY created_at DESC');
     return result.rows.map(rowToLink);
-  }
-}
-
-function rowToLink(row: { code: string; url: string; created_at: Date }): Link {
-  return { code: row.code, url: row.url, createdAt: row.created_at.toISOString() };
-}
+  },
+});

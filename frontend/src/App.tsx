@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { createLink, listLinks } from './api';
 import { Link } from './types';
 
-export function App() {
+export const App = () => {
   const [url, setUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [links, setLinks] = useState<Link[]>([]);
@@ -13,7 +13,7 @@ export function App() {
       .catch(() => setError('failed to load links'));
   }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     try {
@@ -23,7 +23,7 @@ export function App() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'something went wrong');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -83,4 +83,4 @@ export function App() {
       </main>
     </div>
   );
-}
+};

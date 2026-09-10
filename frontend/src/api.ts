@@ -1,6 +1,6 @@
 import { Link } from './types';
 
-export async function createLink(url: string): Promise<Link> {
+export const createLink = async (url: string): Promise<Link> => {
   const res = await fetch('/api/links', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -11,12 +11,12 @@ export async function createLink(url: string): Promise<Link> {
     throw new Error(body.error ?? 'failed to create link');
   }
   return body;
-}
+};
 
-export async function listLinks(): Promise<Link[]> {
+export const listLinks = async (): Promise<Link[]> => {
   const res = await fetch('/api/links');
   if (!res.ok) {
     throw new Error('failed to list links');
   }
   return res.json();
-}
+};

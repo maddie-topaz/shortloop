@@ -6,7 +6,7 @@ import { generateCode } from './shortcode';
 export const MAX_CODE_ATTEMPTS = 5;
 const STATIC_DIR = path.join(__dirname, '..', 'public');
 
-function isValidUrl(value: unknown): value is string {
+const isValidUrl = (value: unknown): value is string => {
   if (typeof value !== 'string') return false;
   try {
     const parsed = new URL(value);
@@ -14,9 +14,9 @@ function isValidUrl(value: unknown): value is string {
   } catch {
     return false;
   }
-}
+};
 
-export function createApp(store: LinkStore): Express {
+export const createApp = (store: LinkStore): Express => {
   const app = express();
   app.use(express.json());
   app.use(express.static(STATIC_DIR));
@@ -52,4 +52,4 @@ export function createApp(store: LinkStore): Express {
   });
 
   return app;
-}
+};

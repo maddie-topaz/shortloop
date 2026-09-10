@@ -9,17 +9,19 @@ import { CodeAlreadyExistsError, Link, LinkStore } from '../src/store';
  * persistence behaviour (uniqueness, ordering, real SQL) is covered
  * separately in pgStore.integration.test.ts against real Postgres.
  */
-function createMockStore(): jest.Mocked<LinkStore> {
+const createMockStore = (): jest.Mocked<LinkStore> => {
   return {
     createLink: jest.fn(),
     getLink: jest.fn(),
     listLinks: jest.fn(),
   };
-}
+};
 
-function fakeLink(code: string, url: string): Link {
-  return { code, url, createdAt: new Date().toISOString() };
-}
+const fakeLink = (code: string, url: string): Link => ({
+  code,
+  url,
+  createdAt: new Date().toISOString(),
+});
 
 describe('POST /api/links', () => {
   it('creates a short link for a valid url', async () => {

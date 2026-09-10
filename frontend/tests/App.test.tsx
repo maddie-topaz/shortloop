@@ -2,12 +2,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { App } from '../src/App';
 
-function mockFetchOnce(response: unknown, ok = true) {
+const mockFetchOnce = (response: unknown, ok = true) => {
   return jest.fn().mockResolvedValueOnce({
     ok,
     json: () => Promise.resolve(response),
   });
-}
+};
 
 describe('App', () => {
   beforeEach(() => {

@@ -5,9 +5,8 @@ const PUBLIC_CIDRS = ['0.0.0.0/0', '::/0'];
 const PUBLIC_WEB_PORTS = [80, 443];
 const SECRET_NAME_PATTERN = /password|secret|token|credential|private_key|apikey|api_key/i;
 
-function isPublic(cidrBlocks: string[] | undefined): boolean {
-  return (cidrBlocks ?? []).some((cidr) => PUBLIC_CIDRS.includes(cidr));
-}
+const isPublic = (cidrBlocks: string[] | undefined): boolean =>
+  (cidrBlocks ?? []).some((cidr) => PUBLIC_CIDRS.includes(cidr));
 
 new PolicyPack('shortloop-policies', {
   policies: [
