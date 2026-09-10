@@ -67,7 +67,9 @@ const logGroup = new aws.cloudwatch.LogGroup('shortloop', { retentionInDays: 14 
 const executionRole = new aws.iam.Role('shortloop-execution', {
   assumeRolePolicy: JSON.stringify({
     Version: '2012-10-17',
-    Statement: [{ Effect: 'Allow', Principal: { Service: 'ecs-tasks.amazonaws.com' }, Action: 'sts:AssumeRole' }],
+    Statement: [
+      { Effect: 'Allow', Principal: { Service: 'ecs-tasks.amazonaws.com' }, Action: 'sts:AssumeRole' },
+    ],
   }),
 });
 new aws.iam.RolePolicyAttachment('shortloop-execution-managed', {
@@ -87,7 +89,9 @@ new aws.iam.RolePolicy('shortloop-execution-secrets', {
 const taskRole = new aws.iam.Role('shortloop-task', {
   assumeRolePolicy: JSON.stringify({
     Version: '2012-10-17',
-    Statement: [{ Effect: 'Allow', Principal: { Service: 'ecs-tasks.amazonaws.com' }, Action: 'sts:AssumeRole' }],
+    Statement: [
+      { Effect: 'Allow', Principal: { Service: 'ecs-tasks.amazonaws.com' }, Action: 'sts:AssumeRole' },
+    ],
   }),
 });
 

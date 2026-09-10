@@ -3,6 +3,10 @@ import { CodeAlreadyExistsError, Link, LinkStore } from './store';
 
 const PG_UNIQUE_VIOLATION = '23505';
 
+function isPgError(err: unknown): err is { code: string } {
+  return typeof err === 'object' && err !== null && 'code' in err;
+}
+
 export class PgStore implements LinkStore {
   constructor(private pool: Pool) {}
 
@@ -23,8 +27,8 @@ export class PgStore implements LinkStore {
         [code, url],
       );
       return rowToLink(result.rows[0]);
-    } catch (err: any) {
-      if (err.code === PG_UNIQUE_VIOLATION) {
+    } catch (err: unknown) {
+      if (isPgError(err) && err.code === PG_UNIQUE_VIOLATION) {
         throw new CodeAlreadyExistsError(code);
       }
       throw err;
