@@ -4,7 +4,8 @@
   "workspaces": [
     "backend",
     "frontend",
-    "infra"
+    "infra",
+    "infra/policies"
   ],
   "scripts": {
     "dev": "./scripts/dev.sh",
@@ -16,7 +17,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit -p backend/tsconfig.json && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p infra/tsconfig.json",
+    "typecheck": "tsc --noEmit -p backend/tsconfig.json && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p infra/tsconfig.json && tsc --noEmit -p infra/policies/tsconfig.json",
     "test:coverage": "npm run test --workspace=backend -- --coverage"
   },
   "devDependencies": {
