@@ -5,3 +5,5 @@ package-lock.json
 backend/public
 playwright-report
 test-results
+mutation-report
+.stryker-tmp
