@@ -1,0 +1,8 @@
+# Paths where a mistake spends money, exposes the database, or changes how code reaches production.
+# Requires "Require review from Code Owners" in branch protection to be enforcing.
+
+/infra/                  @maddie-topaz
+/.github/workflows/      @maddie-topaz
+/.claude/                @maddie-topaz
+/CLAUDE.md               @maddie-topaz
+/backend/Dockerfile      @maddie-topaz
