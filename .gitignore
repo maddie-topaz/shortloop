@@ -9,3 +9,6 @@ build/
 .idea/
 *.tsbuildinfo
 coverage/
+playwright-report/
+test-results/
+backend/public

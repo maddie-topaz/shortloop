@@ -5,7 +5,8 @@
     "backend",
     "frontend",
     "infra",
-    "infra/policies"
+    "infra/policies",
+    "e2e"
   ],
   "scripts": {
     "dev": "./scripts/dev.sh",
@@ -17,8 +18,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit -p backend/tsconfig.json && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p infra/tsconfig.json && tsc --noEmit -p infra/policies/tsconfig.json",
-    "test:coverage": "npm run test --workspace=backend -- --coverage"
+    "typecheck": "tsc --noEmit -p backend/tsconfig.json && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p infra/tsconfig.json && tsc --noEmit -p infra/policies/tsconfig.json && tsc --noEmit -p e2e/tsconfig.json",
+    "test:coverage": "npm run test --workspace=backend -- --coverage",
+    "test:smoke": "npm run test --workspace=e2e"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
