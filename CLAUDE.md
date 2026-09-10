@@ -37,6 +37,10 @@ npm run build        # both workspaces
 
 Merging to `main` triggers `.github/workflows/deploy.yml`, which builds the image, pushes it to ECR tagged with the commit SHA, and runs `pulumi up` against the `prod` stack. There is no manual deploy step.
 
+`imageTag` is a **required** stack config value with no default, and it is not committed — CI supplies it per run. Any Pulumi command therefore needs `--config imageTag=<sha>`, and passing the wrong value rolls production onto that image. It used to default to a fixed tag, which meant a local `pulumi up` silently rolled production back; requiring it makes that failure loud instead.
+
+The GitHub Actions OIDC provider, its IAM role, and that role's policy attachment are Pulumi-managed (adopted via import). Changing who can assume the deploy role is a reviewable diff, not a console click.
+
 ## Rules
 
 - **Never push directly to `main`.** Branch protection enforces this; work on a branch and open a PR.

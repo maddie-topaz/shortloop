@@ -3,8 +3,14 @@ import * as aws from '@pulumi/aws';
 import * as random from '@pulumi/random';
 
 const config = new pulumi.Config();
-const imageTag = config.get('imageTag') ?? 'bootstrap';
+
+// Required rather than defaulted: an unset tag previously fell back to a fixed
+// value, so any run that forgot to set it silently rolled production back.
+const imageTag = config.require('imageTag');
 const containerPort = 4000;
+
+const githubRepository = 'maddie-topaz/shortloop';
+const githubRepositoryIds = 'maddie-topaz@14161136/shortloop@1362280882';
 
 const vpc = aws.ec2.getVpcOutput({ default: true });
 const subnets = vpc.id.apply((vpcId) =>
@@ -179,6 +185,46 @@ new aws.appautoscaling.Policy('shortloop-cpu', {
     predefinedMetricSpecification: { predefinedMetricType: 'ECSServiceAverageCPUUtilization' },
     targetValue: 50,
   },
+});
+
+// Identity GitHub Actions assumes to deploy. Created by hand during bootstrap and
+// adopted into state here, so changes to who can assume it go through review.
+const githubOidcProvider = new aws.iam.OpenIdConnectProvider('github-actions', {
+  url: 'https://token.actions.githubusercontent.com',
+  clientIdLists: ['sts.amazonaws.com'],
+  thumbprintLists: ['6938fd4d98bab03faadb97b34396831e3780aea1', '1c58a3a8518e8759bf075b76b750d4f2df264fcd'],
+});
+
+const githubActionsRole = new aws.iam.Role('shortloop-github-actions', {
+  name: 'shortloop-github-actions',
+  description: 'Assumed by GitHub Actions in maddie-topaz/shortloop via OIDC',
+  assumeRolePolicy: githubOidcProvider.arn.apply((providerArn) =>
+    JSON.stringify({
+      Version: '2012-10-17',
+      Statement: [
+        {
+          Effect: 'Allow',
+          Principal: { Federated: providerArn },
+          Action: 'sts:AssumeRoleWithWebIdentity',
+          Condition: {
+            StringEquals: { 'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com' },
+            // GitHub sends the immutable-id form; the plain form is kept for older tokens.
+            StringLike: {
+              'token.actions.githubusercontent.com:sub': [
+                `repo:${githubRepository}:*`,
+                `repo:${githubRepositoryIds}:*`,
+              ],
+            },
+          },
+        },
+      ],
+    }),
+  ),
+});
+
+new aws.iam.RolePolicyAttachment('shortloop-github-actions-admin', {
+  role: githubActionsRole.name,
+  policyArn: 'arn:aws:iam::aws:policy/AdministratorAccess',
 });
 
 export const url = pulumi.interpolate`http://${alb.dnsName}`;
