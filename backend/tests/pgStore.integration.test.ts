@@ -1,5 +1,5 @@
 import { Pool } from 'pg';
-import { PgStore } from '../src/pgStore';
+import { createPgStore } from '../src/pgStore';
 import { CodeAlreadyExistsError } from '../src/store';
 
 /**
@@ -15,7 +15,7 @@ import { CodeAlreadyExistsError } from '../src/store';
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/shortloop',
 });
-const store = new PgStore(pool);
+const store = createPgStore(pool);
 
 beforeAll(async () => {
   await store.init();

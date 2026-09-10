@@ -22,6 +22,16 @@ npm run build        # both workspaces
 
 ## Conventions
 
+### Code style: functional, not class-based
+
+- **No classes.** Use a factory function returning an object literal instead — `createPgStore(pool)` rather than `new PgStore(pool)`. State goes in the closure, not on `this`.
+- **No `function` declarations.** Use arrow functions assigned to `const`: `const createApp = (store: LinkStore): Express => { ... }`.
+- Both are enforced by ESLint (`func-style` and a `no-restricted-syntax` rule on `ClassDeclaration`), so CI fails on a violation rather than relying on review to catch it.
+- This does not mean _pure_ functional. Local mutation, loops, and `let` are all fine where they read better — `generateCode` builds its string in a `for` loop and that is not a problem to fix.
+- **The one exception is custom error types.** `CodeAlreadyExistsError` must stay `extends Error`, because `app.ts` distinguishes a code collision from a real failure with `instanceof`, and a plain tagged object loses both that and the stack trace. Disable the rule inline with a comment saying why.
+
+### Structure
+
 - Backend routes are registered in `backend/src/app.ts`. `createApp(store)` takes a `LinkStore`, so the route tests inject a mock and never need a database.
 - `PgStore` is the only `LinkStore` implementation. Any new persistence method goes on the interface in `backend/src/store.ts`, is implemented in `PgStore`, and needs a case in `backend/tests/pgStore.integration.test.ts` — that file is the only thing that exercises real SQL, so an untested method there is an untested method in prod.
 - Backend tests need Postgres (`docker compose up -d`). Mutation testing does not: `backend/jest.stryker.config.js` excludes `*.integration.test.ts`, keeping the Stryker run in-process and parallel. Do not point it at a database — parallel mutant workers share one `links` table and truncate it out from under each other, which makes the score nondeterministic.

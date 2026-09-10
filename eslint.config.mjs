@@ -23,6 +23,23 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    // House style is functional: factory functions returning object literals
+    // rather than classes, and arrow consts rather than `function`. Enforced
+    // here because a convention only in CLAUDE.md is a request, not a gate.
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      'func-style': ['error', 'expression', { allowArrowFunctions: true }],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'ClassDeclaration',
+          message:
+            'Prefer a factory function returning an object literal over a class. Custom Error subclasses are the exception — disable this rule inline for those.',
+        },
+      ],
+    },
+  },
+  {
     files: ['frontend/**/*.tsx', 'frontend/**/*.ts'],
     plugins: { 'react-hooks': reactHooks },
     rules: reactHooks.configs.recommended.rules,
