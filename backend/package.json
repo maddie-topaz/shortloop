@@ -11,6 +11,8 @@
     "test:mutation": "stryker run"
   },
   "dependencies": {
+    "@shortloop/contract": "*",
+    "@ts-rest/express": "^3.52.1",
     "express": "^4.19.2",
     "pg": "^8.13.0"
   },

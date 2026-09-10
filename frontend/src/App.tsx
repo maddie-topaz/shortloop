@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createLink, listLinks } from './api';
-import { Link } from './types';
+import { Link } from '@shortloop/contract';
 
 export const App = () => {
   const [url, setUrl] = useState('');
