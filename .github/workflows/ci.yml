@@ -63,6 +63,20 @@ jobs:
 
   test-backend:
     runs-on: ubuntu-latest
+    # Tests run PgStore against a real database now that MemoryStore is gone.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: shortloop
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -71,11 +85,26 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:coverage
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/shortloop
 
   coverage-patch:
     # Only meaningful on a PR, where there is a base to diff against.
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: shortloop
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,6 +115,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:coverage
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/shortloop
       - run: ./scripts/patch-coverage.sh "origin/${{ github.base_ref }}"
 
   test-mutation:
@@ -99,6 +130,8 @@ jobs:
       - run: npm ci
       # Coverage proves a line ran; this proves the tests would notice if its
       # behaviour changed. Fails below the threshold in stryker.config.json.
+      # Runs the app's logic tests only — no database (see
+      # backend/jest.stryker.config.js).
       - run: npm run test:mutation
       - uses: actions/upload-artifact@v4
         if: always()

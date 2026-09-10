@@ -14,6 +14,10 @@ export default tseslint.config(
       'backend/public/**',
       '**/playwright-report/**',
       '**/test-results/**',
+      // Stryker's sandbox is a full copy of the workspace; an interrupted run
+      // leaves one behind and it would otherwise be linted as source.
+      '**/.stryker-tmp/**',
+      '**/mutation-report/**',
     ],
   },
   js.configs.recommended,
@@ -31,7 +35,9 @@ export default tseslint.config(
         describe: 'readonly',
         it: 'readonly',
         expect: 'readonly',
+        beforeAll: 'readonly',
         beforeEach: 'readonly',
+        afterAll: 'readonly',
       },
     },
     rules: {
@@ -63,6 +69,8 @@ export default tseslint.config(
     languageOptions: {
       globals: { module: 'writable', require: 'readonly', __dirname: 'readonly' },
     },
+    // These are CommonJS config files; require() is the module system, not a lapse.
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   prettier,
 );
