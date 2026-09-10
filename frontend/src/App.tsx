@@ -8,7 +8,9 @@ export function App() {
   const [links, setLinks] = useState<Link[]>([]);
 
   useEffect(() => {
-    listLinks().then(setLinks).catch(() => setError('failed to load links'));
+    listLinks()
+      .then(setLinks)
+      .catch(() => setError('failed to load links'));
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
