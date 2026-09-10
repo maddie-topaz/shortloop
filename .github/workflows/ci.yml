@@ -67,7 +67,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # Stryker requires Node >= 22. It is a dev tool that ships nothing, so
+          # this is deliberately the only job not on the project's Node 20.
+          node-version: 22
           cache: npm
       - run: npm ci
       # Coverage proves a line ran; this proves the tests would notice if its
