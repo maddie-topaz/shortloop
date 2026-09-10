@@ -1,8 +1,10 @@
 import express, { Express } from 'express';
+import path from 'path';
 import { CodeAlreadyExistsError, LinkStore } from './store';
 import { generateCode } from './shortcode';
 
 const MAX_CODE_ATTEMPTS = 5;
+const STATIC_DIR = path.join(__dirname, '..', 'public');
 
 function isValidUrl(value: unknown): value is string {
   if (typeof value !== 'string') return false;
@@ -17,6 +19,7 @@ function isValidUrl(value: unknown): value is string {
 export function createApp(store: LinkStore): Express {
   const app = express();
   app.use(express.json());
+  app.use(express.static(STATIC_DIR));
 
   app.post('/api/links', async (req, res) => {
     const { url } = req.body ?? {};
