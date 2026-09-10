@@ -1,0 +1,3 @@
+name: shortloop-policies
+runtime: nodejs
+description: Guardrails on shortloop's AWS infrastructure — the checks a human reviewer would otherwise have to catch by eye.
