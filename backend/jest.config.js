@@ -3,6 +3,10 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testMatch: ['**/tests/**/*.test.ts'],
+  // Stryker copies the whole workspace into .stryker-tmp/sandbox-*; an
+  // interrupted run leaves one behind and jest would otherwise collect the
+  // stale copies of these same tests.
+  testPathIgnorePatterns: ['/node_modules/', '/.stryker-tmp/'],
   collectCoverageFrom: ['src/**/*.ts', '!src/index.ts'],
   coverageThreshold: {
     global: {

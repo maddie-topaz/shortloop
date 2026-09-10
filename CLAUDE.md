@@ -22,8 +22,9 @@ npm run build        # both workspaces
 
 ## Conventions
 
-- Backend routes are registered in `backend/src/app.ts`. `createApp(store)` takes a `LinkStore`, so tests inject `MemoryStore` and never need a database.
-- Any new persistence method goes on the `LinkStore` interface in `backend/src/store.ts` and must be implemented in **both** `PgStore` and `MemoryStore`, or the tests will pass against an implementation prod does not have.
+- Backend routes are registered in `backend/src/app.ts`. `createApp(store)` takes a `LinkStore`, so the route tests inject a mock and never need a database.
+- `PgStore` is the only `LinkStore` implementation. Any new persistence method goes on the interface in `backend/src/store.ts`, is implemented in `PgStore`, and needs a case in `backend/tests/pgStore.integration.test.ts` — that file is the only thing that exercises real SQL, so an untested method there is an untested method in prod.
+- Backend tests need Postgres (`docker compose up -d`). Mutation testing does not: `backend/jest.stryker.config.js` excludes `*.integration.test.ts`, keeping the Stryker run in-process and parallel. Do not point it at a database — parallel mutant workers share one `links` table and truncate it out from under each other, which makes the score nondeterministic.
 - `GET /:code` is a catch-all and must stay the **last** route registered, after static file serving and all `/api/*` routes.
 
 ## Gotchas that cost real debugging time

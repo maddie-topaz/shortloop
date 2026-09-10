@@ -23,9 +23,18 @@ The frontend dev server proxies `/api` to `http://localhost:4000` (the backend's
 ## Tests
 
 ```bash
+docker compose up -d   # backend tests need Postgres on localhost:5432
 npm test               # both workspaces
 npm run test:backend
 npm run test:frontend
 ```
 
-Backend tests run against an in-memory store — no database required.
+Backend tests split in two:
+
+- `tests/app.test.ts` — route and validation logic against a mocked `LinkStore`. No database.
+- `tests/pgStore.integration.test.ts` — `PgStore` against real Postgres, covering the unique
+  constraint, ordering, and the not-found case. Reads `DATABASE_URL`, defaulting to the
+  `docker compose` instance on `localhost:5432`.
+
+Mutation testing (`npm run test:mutation`) runs the logic tests only and needs no database —
+see `backend/jest.stryker.config.js`.

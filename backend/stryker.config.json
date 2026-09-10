@@ -3,17 +3,17 @@
   "packageManager": "npm",
   "testRunner": "jest",
   "jest": {
-    "configFile": "jest.config.js"
+    "configFile": "jest.stryker.config.js"
   },
-  "mutate": ["src/**/*.ts", "!src/index.ts"],
+  "mutate": ["src/**/*.ts", "!src/index.ts", "!src/pgStore.ts"],
   "coverageAnalysis": "perTest",
   "reporters": ["html", "clear-text", "progress"],
   "htmlReporter": {
     "fileName": "mutation-report/index.html"
   },
   "thresholds": {
-    "high": 80,
-    "low": 60,
-    "break": 55
+    "high": 90,
+    "low": 75,
+    "break": 80
   }
 }
