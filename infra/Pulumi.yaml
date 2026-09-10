@@ -1,0 +1,3 @@
+name: shortloop-infra
+runtime: nodejs
+description: AWS infrastructure for shortloop — ECS Fargate service + RDS Postgres

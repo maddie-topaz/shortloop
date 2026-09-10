@@ -5,7 +5,10 @@ import { PgStore } from './pgStore';
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 
 async function main() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : undefined,
+  });
   const store = new PgStore(pool);
   await store.init();
 
