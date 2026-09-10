@@ -97,6 +97,20 @@ describe('POST /api/links', () => {
     expect(res.body.error).toBe('failed to generate a unique code, try again');
     expect(store.createLink).toHaveBeenCalledTimes(MAX_CODE_ATTEMPTS);
   });
+
+  it('propagates a store failure that is not a code collision', async () => {
+    const store = createMockStore();
+    store.createLink.mockRejectedValue(new Error('database on fire'));
+    const app = createApp(store);
+
+    const res = await request(app).post('/api/links').send({ url: 'https://example.com' });
+
+    expect(res.status).toBe(500);
+    // The retry loop is only for collisions. Anything else must abort on the
+    // first attempt rather than being swallowed and retried.
+    expect(store.createLink).toHaveBeenCalledTimes(1);
+    expect(res.body.error).not.toBe('failed to generate a unique code, try again');
+  });
 });
 
 describe('GET /:code', () => {

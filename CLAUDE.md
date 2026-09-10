@@ -6,6 +6,7 @@ URL shortener built as a testbed for an agentic DevOps pipeline. The pipeline is
 
 npm workspaces monorepo:
 
+- `packages/contract/` — the HTTP contract: Zod schemas + ts-rest router, imported by both ends
 - `backend/` — Express + TypeScript API, Postgres via `pg`
 - `frontend/` — React + TypeScript + Vite, styled with daisyUI (Tailwind v4)
 - `infra/` — Pulumi (TypeScript) program: ECS Fargate + RDS + ALB
@@ -32,6 +33,10 @@ npm run build        # both workspaces
 
 ### Structure
 
+- **The API is defined once, in `packages/contract`.** Zod schemas plus a ts-rest contract; `Link` is inferred from the schema, so backend and frontend cannot drift. Add or change an endpoint there first, then implement it — the types on both sides follow.
+- **`packages/contract` must be built before anything that imports it.** It compiles to `dist/`, so a bare `npm ci` leaves backend and frontend unable to resolve it. `npm run build` handles the ordering; CI jobs run `npm run build --workspace=@shortloop/contract` explicitly.
+- **ts-rest is pinned to Zod 3.** ts-rest 3.52 peer-depends on `zod@^3`, while the repo's root `zod` is 4.x (pulled in by Stryker). npm therefore nests zod 3 and the `@ts-rest/*` packages inside each workspace instead of hoisting them — which is why `backend/Dockerfile` preserves the workspace layout rather than flattening `dist` to `/app`.
+- **`requestValidationErrorHandler` is not optional decoration.** ts-rest's default 400 body is a serialised ZodError; this API returns `{ error: string }`, and the frontend and smoke test both depend on that shape.
 - Backend routes are registered in `backend/src/app.ts`. `createApp(store)` takes a `LinkStore`, so the route tests inject a mock and never need a database.
 - `PgStore` is the only `LinkStore` implementation. Any new persistence method goes on the interface in `backend/src/store.ts`, is implemented in `PgStore`, and needs a case in `backend/tests/pgStore.integration.test.ts` — that file is the only thing that exercises real SQL, so an untested method there is an untested method in prod.
 - Backend tests need Postgres (`docker compose up -d`). Mutation testing does not: `backend/jest.stryker.config.js` excludes `*.integration.test.ts`, keeping the Stryker run in-process and parallel. Do not point it at a database — parallel mutant workers share one `links` table and truncate it out from under each other, which makes the score nondeterministic.

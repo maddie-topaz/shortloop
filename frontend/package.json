@@ -10,6 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@shortloop/contract": "*",
+    "@ts-rest/core": "^3.52.1",
     "axios": "^1.20.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

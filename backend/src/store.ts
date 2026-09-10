@@ -1,8 +1,8 @@
-export interface Link {
-  code: string;
-  url: string;
-  createdAt: string;
-}
+import type { Link } from '@shortloop/contract';
+
+// Re-exported so store consumers keep importing Link from here, but the shape
+// itself is inferred from the contract schema rather than declared twice.
+export type { Link };
 
 // The one class in the codebase: custom error types need `extends Error` for
 // `instanceof` narrowing (app.ts relies on it) and for usable stack traces.

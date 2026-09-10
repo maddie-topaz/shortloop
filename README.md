@@ -4,6 +4,7 @@ URL shortener used as a testbed for an agentic DevOps pipeline (agent-driven PRs
 
 ## Stack
 
+- Contract: Zod + ts-rest, shared by both ends (`packages/contract`)
 - Backend: Node + TypeScript + Express, Postgres via `pg`
 - Frontend: React + TypeScript + Vite
 - Tests: Jest (both workspaces)

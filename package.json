@@ -2,6 +2,7 @@
   "name": "shortloop",
   "private": true,
   "workspaces": [
+    "packages/*",
     "backend",
     "frontend",
     "infra",
@@ -14,11 +15,11 @@
     "test": "npm run test --workspace=backend && npm run test --workspace=frontend",
     "test:backend": "npm run test --workspace=backend",
     "test:frontend": "npm run test --workspace=frontend",
-    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "build": "npm run build --workspace=@shortloop/contract && npm run build --workspace=backend && npm run build --workspace=frontend",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit -p backend/tsconfig.json && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p infra/tsconfig.json && tsc --noEmit -p infra/policies/tsconfig.json && tsc --noEmit -p e2e/tsconfig.json",
+    "typecheck": "tsc --noEmit -p packages/contract/tsconfig.json && tsc --noEmit -p backend/tsconfig.json && tsc --noEmit -p frontend/tsconfig.json && tsc --noEmit -p infra/tsconfig.json && tsc --noEmit -p infra/policies/tsconfig.json && tsc --noEmit -p e2e/tsconfig.json",
     "test:coverage": "npm run test --workspace=backend -- --coverage",
     "test:smoke": "npm run test --workspace=e2e",
     "test:mutation": "npm run test:mutation --workspace=backend"

@@ -39,6 +39,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The contract compiles to dist/, which backend and frontend both
+      # import. Nothing works until it exists.
+      - run: npm run build --workspace=@shortloop/contract
       - run: npm run typecheck
 
   build:
@@ -84,6 +87,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The contract compiles to dist/, which backend and frontend both
+      # import. Nothing works until it exists.
+      - run: npm run build --workspace=@shortloop/contract
       - run: npm run test:coverage
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/shortloop
@@ -114,6 +120,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The contract compiles to dist/, which backend and frontend both
+      # import. Nothing works until it exists.
+      - run: npm run build --workspace=@shortloop/contract
       - run: npm run test:coverage
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/shortloop
@@ -128,6 +137,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The contract compiles to dist/, which backend and frontend both
+      # import. Nothing works until it exists.
+      - run: npm run build --workspace=@shortloop/contract
       # Coverage proves a line ran; this proves the tests would notice if its
       # behaviour changed. Fails below the threshold in stryker.config.json.
       # Runs the app's logic tests only — no database (see
@@ -149,6 +161,9 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The contract compiles to dist/, which backend and frontend both
+      # import. Nothing works until it exists.
+      - run: npm run build --workspace=@shortloop/contract
       - run: npm run test:frontend
 
   test-smoke:
