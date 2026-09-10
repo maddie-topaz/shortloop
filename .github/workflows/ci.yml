@@ -72,6 +72,47 @@ jobs:
       - run: npm ci
       - run: npm run test:frontend
 
+  test-smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: shortloop
+        ports:
+          - 5432:5432
+        # The job does not start until Postgres answers, so the backend never
+        # races the database on boot.
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      # Serve the built frontend from the backend, the same single-origin
+      # arrangement the container uses in production.
+      - run: cp -r frontend/dist backend/public
+      - run: npm run test:smoke
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/shortloop
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            e2e/playwright-report/
+            e2e/test-results/
+          retention-days: 7
+
   secrets:
     runs-on: ubuntu-latest
     steps:

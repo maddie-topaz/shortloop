@@ -1,0 +1,13 @@
+{
+  "name": "@shortloop/e2e",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^20.16.11",
+    "typescript": "^5.6.3"
+  }
+}
