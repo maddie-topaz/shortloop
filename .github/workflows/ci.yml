@@ -61,6 +61,22 @@ jobs:
       - run: npm ci
       - run: npm run test:coverage
 
+  coverage-patch:
+    # Only meaningful on a PR, where there is a base to diff against.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run test:coverage
+      - run: node scripts/patch-coverage.mjs "origin/${{ github.base_ref }}"
+
   test-frontend:
     runs-on: ubuntu-latest
     steps:
