@@ -3,7 +3,7 @@ import path from 'path';
 import { CodeAlreadyExistsError, LinkStore } from './store';
 import { generateCode } from './shortcode';
 
-const MAX_CODE_ATTEMPTS = 5;
+export const MAX_CODE_ATTEMPTS = 5;
 const STATIC_DIR = path.join(__dirname, '..', 'public');
 
 function isValidUrl(value: unknown): value is string {

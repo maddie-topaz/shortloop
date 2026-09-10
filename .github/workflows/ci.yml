@@ -61,6 +61,25 @@ jobs:
       - run: npm ci
       - run: npm run test:coverage
 
+  test-mutation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # Coverage proves a line ran; this proves the tests would notice if its
+      # behaviour changed. Fails below the threshold in stryker.config.json.
+      - run: npm run test:mutation
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-report
+          path: backend/mutation-report/
+          retention-days: 7
+
   test-frontend:
     runs-on: ubuntu-latest
     steps:
