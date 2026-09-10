@@ -64,11 +64,5 @@ export default tseslint.config(
       globals: { module: 'writable', require: 'readonly', __dirname: 'readonly' },
     },
   },
-  {
-    files: ['scripts/**/*.mjs'],
-    languageOptions: {
-      globals: { process: 'readonly', console: 'readonly' },
-    },
-  },
   prettier,
 );
